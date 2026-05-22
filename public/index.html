@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SolarScan AI</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a18;min-height:100vh;padding:32px 16px}
+.app{max-width:600px;margin:0 auto}
+.card{background:#fff;border:1px solid #e8e6e0;border-radius:16px;padding:24px;margin-bottom:14px}
+h1{font-size:24px;font-weight:700;margin-bottom:6px}
+.sub{font-size:14px;color:#666;margin-bottom:14px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:#f5f4f0;border:1px solid #e8e6e0;border-radius:99px;padding:5px 14px;font-size:13px;color:#444}
+.dz{border:1.5px dashed #d0cec8;border-radius:12px;padding:36px 20px;text-align:center;cursor:pointer;margin-bottom:12px}
+.dz:hover{background:#f9f8f5}
+.dz-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.dz-sub{font-size:13px;color:#888}
+input[type=file]{display:none}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;margin-bottom:12px}
+.th{border-radius:8px;aspect-ratio:1;overflow:hidden;position:relative;background:#f0ede8}
+.th img{width:100%;height:100%;object-fit:cover}
+.th .rm{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-weight:700}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label{font-size:12px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.04em}
+.f input,.f select{padding:9px 12px;border:1px solid #e0ddd8;border-radius:8px;font-size:14px;outline:none}
+.f input:focus,.f select:focus{border-color:#1a1a18}
+.btn{padding:11px 18px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;border:none;background:#1a1a18;color:#fff;margin-top:4px}
+.btn:hover{background:#333}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.hidden{display:none}
+.prog-label{display:flex;justify-content:space-between;font-size:12px;color:#888;margin-bottom:6px}
+.prog-bar{height:4px;background:#f0ede8;border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:#1a1a18;border-radius:99px;transition:width .5s}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.metric{background:#f5f4f0;border-radius:10px;padding:12px}
+.ml{font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.mv{font-size:22px;font-weight:700}
+.issue{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f0ede8}
+.issue:last-child{border-bottom:none}
+.sev{font-size:10px;padding:3px 8px;border-radius:99px;font-weight:700;white-space:nowrap;flex-shrink:0;text-transform:uppercase}
+.sh{background:#fee2e2;color:#991b1b}
+.sm{background:#fef3c7;color:#92400e}
+.sl{background:#d1fae5;color:#065f46}
+.it{font-size:13px;font-weight:600;margin-bottom:2px}
+.id{font-size:12px;color:#666;line-height:1.5}
+.summary{background:#f5f4f0;border-radius:10px;padding:14px;font-size:14px;color:#555;line-height:1.6;margin-bottom:14px}
+.roi{border:1px solid #e8e6e0;border-radius:10px;overflow:hidden;margin-bottom:4px}
+.rr{display:flex;justify-content:space-between;padding:10px 14px;font-size:13px;border-bottom:1px solid #f0ede8}
+.rr:last-child{border-bottom:none;font-weight:700;background:#f9f8f5}
+.rl{color:#666}
+.rv{font-weight:600}
+.err{background:#fee2e2;border-radius:10px;padding:12px;font-size:13px;color:#991b1b;margin-top:10px}
+.badge-ok{background:#d1fae5;color:#065f46;font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px}
+.sec{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- STEP 1: UPLOAD -->
+  <div id="step1">
+    <div class="card">
+      <h1>☀️ SolarScan AI</h1>
+      <p class="sub">Ανέβασε drone footage — μάθε τι χάνεις σε λεπτά</p>
+      <div class="pill">⚡ <strong>€29</strong> ανά αναφορά · αποτέλεσμα σε &lt;2 λεπτά</div>
+    </div>
+    <div class="card">
+      <div class="dz" id="dz" onclick="document.getElementById('fi').click()">
+        <div style="font-size:32px;margin-bottom:8px">📸</div>
+        <div class="dz-title">Drag & drop ή κλικ για upload</div>
+        <div class="dz-sub">Φωτογραφίες (JPG, PNG) · Βίντεο (MP4) από drone ή smartphone</div>
+      </div>
+      <input type="file" id="fi" multiple accept="image/*,video/*">
+      <div class="pg" id="pg"></div>
+      <button class="btn" id="b1" disabled onclick="goStep(2)">Συνέχεια →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: INFO -->
+  <div id="step2" class="hidden">
+    <div class="card">
+      <div class="fg">
+        <div class="f"><label>Ισχύς (kWp)</label><input type="number" id="kwp" placeholder="π.χ. 10"></div>
+        <div class="f"><label>Χρονιά</label><input type="number" id="yr" placeholder="π.χ. 2021"></div>
+      </div>
+      <div class="fg">
+        <div class="f"><label>Τύπος</label>
+          <select id="itype">
+            <option value="residential">Οικιακή (στέγη)</option>
+            <option value="commercial">Επαγγελματική</option>
+            <option value="ground">Εδαφική</option>
+          </select>
+        </div>
+        <div class="f"><label>Τιμή kWh (€)</label><input type="number" id="pr" placeholder="0.12" step="0.01"></div>
+      </div>
+      <div class="f" style="margin-bottom:12px"><label>Παρατηρήσεις</label><input type="text" id="nt" placeholder="π.χ. Μειωμένη παραγωγή"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" style="background:#fff;color:#1a1a18;border:1px solid #e0ddd8;width:auto;padding:11px 20px" onclick="goStep(1)">← Πίσω</button>
+        <button class="btn" onclick="analyze()">🔍 Έναρξη AI ανάλυσης</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: ANALYZING -->
+  <div id="step3" class="hidden">
+    <div class="card" style="text-align:center;padding:40px 20px">
+      <div style="font-size:40px;margin-bottom:14px">⚡</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:5px" id="as">Ανάλυση σε εξέλιξη…</div>
+      <div style="font-size:13px;color:#888;margin-bottom:20px" id="ad">Φόρτωση αρχείων</div>
+      <div class="prog-label"><span id="pl">Ανίχνευση πάνελ</span><span id="pp">0%</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+    </div>
+    <div class="err hidden" id="eb"></div>
+  </div>
+
+  <!-- STEP 4: REPORT -->
+  <div id="step4" class="hidden">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:17px;font-weight:700">Αναφορά SolarScan</div>
+        <span class="badge-ok">✓ Ολοκληρώθηκε</span>
+      </div>
+      <div class="metric-row" id="rm"></div>
+      <div class="sec">Γενική εικόνα</div>
+      <div class="summary" id="rs"></div>
+      <div class="sec">Προβλήματα</div>
+      <div id="ri" style="margin-bottom:16px"></div>
+      <div class="sec">Οικονομική εκτίμηση</div>
+      <div class="roi" id="rr"></div>
+      <button class="btn" style="margin-top:14px" onclick="goStep(1)">+ Νέα ανάλυση</button>
+    </div>
+  </div>
+
+</div>
+<script>
+let files=[];
+const dz=document.getElementById('dz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.style.background='#f0ede8'});
+dz.addEventListener('dragleave',()=>dz.style.background='');
+dz.addEventListener('drop',e=>{e.preventDefault();dz.style.background='';add(e.dataTransfer.files)});
+document.getElementById('fi').addEventListener('change',()=>add(document.getElementById('fi').files));
+function add(f){Array.from(f).forEach(x=>{if(!files.find(y=>y.name===x.name))files.push(x)});render();document.getElementById('b1').disabled=!files.length}
+function render(){
+  const pg=document.getElementById('pg');pg.innerHTML='';
+  files.forEach((f,i)=>{
+    const d=document.createElement('div');d.className='th';
+    if(f.type.startsWith('video'))d.innerHTML='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px">🎬</div>';
+    else{const u=URL.createObjectURL(f);d.innerHTML=`<img src="${u}" alt="">`;}
+    const r=document.createElement('button');r.className='rm';r.textContent='×';
+    r.onclick=e=>{e.stopPropagation();files.splice(i,1);render();document.getElementById('b1').disabled=!files.length};
+    d.appendChild(r);pg.appendChild(d);
+  });
+}
+function goStep(n){
+  [1,2,3,4].forEach(i=>document.getElementById('step'+i).classList.toggle('hidden',i!==n));
+}
+async function analyze(){
+  goStep(3);
+  const stages=[['Ανίχνευση πάνελ','Εντοπισμός στοιχείων…',20],['Θερμική ανάλυση','Εντοπισμός hotspots…',48],['Έλεγχος απόδοσης','Σύγκριση παραγωγής…',72],['Οικονομική εκτίμηση','Υπολογισμός απώλειας…',90],['Σύνταξη αναφοράς','Τελικοποίηση…',97]];
+  let si=0;
+  const iv=setInterval(()=>{if(si<stages.length){const[l,d,p]=stages[si];document.getElementById('pl').textContent=l;document.getElementById('ad').textContent=d;document.getElementById('pp').textContent=p+'%';document.getElementById('pf').style.width=p+'%';si++}},700);
+  try{
+    const fd=new FormData();
+    files.forEach(f=>fd.append('files',f));
+    fd.append('kwp',document.getElementById('kwp').value||'10');
+    fd.append('year',document.getElementById('yr').value||'2021');
+    fd.append('itype',document.getElementById('itype').value);
+    fd.append('price',document.getElementById('pr').value||'0.12');
+    fd.append('notes',document.getElementById('nt').value);
+    const res=await fetch('/api/analyze',{method:'POST',body:fd});
+    clearInterval(iv);document.getElementById('pf').style.width='100%';document.getElementById('pp').textContent='100%';
+    if(!res.ok)throw new Error('Server error '+res.status);
+    const data=await res.json();
+    if(!data.success)throw new Error(data.error);
+    setTimeout(()=>showReport(data.report),300);
+  }catch(e){
+    clearInterval(iv);
+    const eb=document.getElementById('eb');eb.textContent='Σφάλμα: '+e.message;eb.classList.remove('hidden');
+    document.getElementById('as').textContent='Αποτυχία';
+  }
+}
+function showReport(r){
+  goStep(4);
+  const hs=r.health_score||75;
+  const hc=hs>=80?'#065f46':hs>=60?'#92400e':'#991b1b';
+  document.getElementById('rm').innerHTML=`<div class="metric"><div class="ml">Health score</div><div class="mv" style="color:${hc}">${Math.round(hs)}<span style="font-size:14px;color:#888">/100</span></div></div><div class="metric"><div class="ml">Απώλεια</div><div class="mv" style="color:#92400e">${Math.round(r.performance_loss_pct||0)}<span style="font-size:14px;color:#888">%</span></div></div><div class="metric"><div class="ml">Εγκατάσταση</div><div class="mv" style="font-size:16px">${document.getElementById('kwp').value||'?'} kWp</div></div>`;
+  document.getElementById('rs').textContent=r.summary||'';
+  const sl={high:'Υψηλή',medium:'Μέτρια',low:'Χαμηλή'},sc={high:'sh',medium:'sm',low:'sl'};
+  document.getElementById('ri').innerHTML=(r.issues||[]).map(i=>`<div class="issue"><span class="sev ${sc[i.severity]||'sl'}">${sl[i.severity]||i.severity}</span><div><div class="it">${i.title}${i.panels_affected?` <span style="font-size:11px;color:#aaa;font-weight:400">(${i.panels_affected} πάνελ)</span>`:''}</div><div class="id">${i.description}</div></div></div>`).join('');
+  const loss=r.annual_loss_eur||0,rep=r.repair_cost_eur||0,pb=r.payback_months||0;
+  document.getElementById('rr').innerHTML=`<div class="rr"><span class="rl">Ετήσια απώλεια</span><span class="rv" style="color:#991b1b">−€${Math.round(loss).toLocaleString('el-GR')}</span></div><div class="rr"><span class="rl">Κόστος επισκευής</span><span class="rv">€${Math.round(rep).toLocaleString('el-GR')}</span></div><div class="rr"><span class="rl">Απόσβεση</span><span class="rv">${pb} μήνες</span></div><div class="rr"><span class="rl">💰 Κέρδος 5ετίας</span><span class="rv" style="color:#065f46">+€${Math.round(loss*5-rep).toLocaleString('el-GR')}</span></div>`;
+}
+</script>
+</body>
+</html>
